@@ -1,4 +1,4 @@
-require_relative("db/sql_runner")
+require_relative("../db/sql_runner")
 
 class Movie
   attr_accessor :title, :genre, :rating
