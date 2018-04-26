@@ -1,7 +1,7 @@
 require_relative("../db/sql_runner")
 
 class Movie
-  attr_accessor :title, :genre, :rating
+  attr_accessor :title, :genre, :rating, :budget
   attr_reader :id
 
   def initialize(options)
@@ -9,6 +9,7 @@ class Movie
     @title = options["title"]
     @genre = options["genre"]
     @rating = options["rating"].to_i
+    @budget = options["budget"].to_i
   end
 
   def stars()
@@ -21,16 +22,23 @@ class Movie
     return Star.map_items(stars_hashes)
   end
 
+  def profit()
+    stars = self.stars()
+    p stars
+    profit = stars.reduce(@budget) { |budget, star| budget-star.fee }
+    return profit
+  end
+
   def save()
-    sql = "INSERT INTO movies (title, genre, rating) values ($1, $2, $3) RETURNING id"
-    values = [@title, @genre, @rating]
+    sql = "INSERT INTO movies (title, genre, rating, budget) values ($1, $2, $3, $4) RETURNING id"
+    values = [@title, @genre, @rating, @budget]
     movie = SqlRunner.run(sql, values).first()
     @id = movie["id"].to_i
   end
 
   def update()
-    sql = "UPDATE movies SET (title, genre, rating) = ($1, $2, $3) WHERE id = $4"
-    values = [@title, @genre, @rating, @id]
+    sql = "UPDATE movies SET (title, genre, rating, budget) = ($1, $2, $3, $4) WHERE id = $5"
+    values = [@title, @genre, @rating, @budget, @id]
     SqlRunner.run(sql, values)
   end
 
