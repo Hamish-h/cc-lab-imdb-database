@@ -10,6 +10,16 @@ class Star
     @last_name = options["last_name"]
   end
 
+  def movies()
+    sql = "SELECT movies.* FROM movies
+      INNER JOIN castings
+      ON castings.movie_id = movies.id
+      WHERE castings.star_id = $1;"
+    values = [@id]
+    movies_hashes = SqlRunner.run(sql, values)
+    return Movie.map_items(movies_hashes)
+  end
+
   def save()
     sql = "INSERT INTO stars (first_name, last_name) values ($1, $2) RETURNING id"
     values = [@first_name, @last_name]
@@ -27,6 +37,10 @@ class Star
     sql = "DELETE FROM stars WHERE id = $1"
     values = [@id]
     SqlRunner.run(sql, values)
+  end
+
+  def self.map_items(items)
+    items.map { |item| self.new(item)}
   end
 
   def self.delete_all()
