@@ -21,6 +21,12 @@ class Movie
   def update()
     sql = "UPDATE movies SET (title, genre, rating) = ($1, $2, $3) WHERE id = $4"
     values = [@title, @genre, @rating, @id]
-    SqlRunner.run(sql, values).first()
+    SqlRunner.run(sql, values)
+  end
+
+  def delete()
+    sql = "DELETE FROM movies WHERE id = $1"
+    values = [@id]
+    SqlRunner.run(sql, values)
   end
 end
